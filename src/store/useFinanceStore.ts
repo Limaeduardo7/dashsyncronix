@@ -6,10 +6,13 @@ interface FinanceState {
   partners: any[];
   summary: any;
   loading: boolean;
+  dateRange: { start: string; end: string };
+  setDateRange: (start: string, end: string) => void;
   fetchMetrics: () => Promise<void>;
   fetchConfig: () => Promise<void>;
   fetchPartners: () => Promise<void>;
   fetchSummary: (start?: string, end?: string) => Promise<void>;
+  fetchAll: () => Promise<void>;
   saveMetrics: (data: any) => Promise<void>;
   saveConfig: (data: any) => Promise<void>;
   savePartners: (data: any) => Promise<void>;
@@ -21,6 +24,12 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   partners: [],
   summary: null,
   loading: false,
+  dateRange: { start: '', end: '' },
+
+  setDateRange: (start, end) => {
+    set({ dateRange: { start, end } });
+    get().fetchSummary(start, end);
+  },
 
   fetchMetrics: async () => {
     const res = await fetch('/api/metrics');
@@ -42,12 +51,17 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     let url = '/api/finance/summary';
     if (start && end) {
       const params = new URLSearchParams();
-      if (start) params.append('start', start);
-      if (end) params.append('end', end);
+      params.append('start', start);
+      params.append('end', end);
       url += `?${params.toString()}`;
     }
     const res = await fetch(url);
     set({ summary: await res.json(), loading: false });
+  },
+
+  fetchAll: async () => {
+    const { fetchMetrics, fetchSummary, fetchConfig, fetchPartners } = get();
+    await Promise.all([fetchMetrics(), fetchSummary(), fetchConfig(), fetchPartners()]);
   },
 
   saveMetrics: async (data) => {
@@ -57,7 +71,8 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       body: JSON.stringify(data),
     });
     await get().fetchMetrics();
-    await get().fetchSummary();
+    const { start, end } = get().dateRange;
+    await get().fetchSummary(start || undefined, end || undefined);
   },
 
   saveConfig: async (data) => {
@@ -67,7 +82,8 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       body: JSON.stringify(data),
     });
     await get().fetchConfig();
-    await get().fetchSummary();
+    const { start, end } = get().dateRange;
+    await get().fetchSummary(start || undefined, end || undefined);
   },
 
   savePartners: async (data) => {
@@ -77,6 +93,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       body: JSON.stringify(data),
     });
     await get().fetchPartners();
-    await get().fetchSummary();
+    const { start, end } = get().dateRange;
+    await get().fetchSummary(start || undefined, end || undefined);
   },
 }));

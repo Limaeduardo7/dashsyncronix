@@ -1,8 +1,22 @@
 import { cn } from '@/src/lib/utils';
 
-export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
+interface CardProps {
+  className?: string;
+  children: React.ReactNode;
+  variant?: 'default' | 'highlight' | 'gradient';
+}
+
+export function Card({ className, children, variant = 'default' }: CardProps) {
   return (
-    <div className={cn('bg-surface-container-low p-5 rounded-xl border border-outline-variant/5 group hover:bg-surface-container-high transition-all relative overflow-hidden', className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-xl border border-outline-variant/10 p-5 transition-all duration-300',
+        variant === 'default' && 'bg-surface-container-low hover:border-outline-variant/25',
+        variant === 'highlight' && 'bg-surface-container-low glow-primary hover:border-primary/30',
+        variant === 'gradient' && 'bg-gradient-to-br from-surface-container-low to-surface-container gradient-border hover:border-primary/20',
+        className
+      )}
+    >
       {children}
     </div>
   );

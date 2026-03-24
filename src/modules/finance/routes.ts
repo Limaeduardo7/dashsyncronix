@@ -27,12 +27,10 @@ export async function financeRoutes(server: FastifyInstance) {
 
     const aggregated = metrics.reduce((acc, m) => ({
       faturamentoHotmart: acc.faturamentoHotmart + m.faturamentoHotmart,
-      faturamentoYoutube: acc.faturamentoYoutube + m.faturamentoYoutube,
       investimentoMeta: acc.investimentoMeta + m.investimentoMeta,
       investimentoGoogle: acc.investimentoGoogle + m.investimentoGoogle,
     }), {
       faturamentoHotmart: 0,
-      faturamentoYoutube: 0,
       investimentoMeta: 0,
       investimentoGoogle: 0,
     });
@@ -41,7 +39,6 @@ export async function financeRoutes(server: FastifyInstance) {
     
     const result = calcularFinanceiro(
       aggregated.faturamentoHotmart,
-      aggregated.faturamentoYoutube,
       aggregated.investimentoMeta,
       aggregated.investimentoGoogle,
       config.custoFixoMensal,

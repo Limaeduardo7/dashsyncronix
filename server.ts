@@ -21,6 +21,8 @@ async function start() {
   server.register(partnersRoutes, { prefix: '/api/partners' });
   server.register(financeRoutes, { prefix: '/api/finance' });
 
+  await server.after();
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },

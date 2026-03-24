@@ -15,7 +15,6 @@ export interface FinanceiroResult {
 
 export function calcularFinanceiro(
   faturamentoHotmart: number,
-  faturamentoYoutube: number,
   investimentoMeta: number,
   investimentoGoogle: number,
   custoFixoMensal: number,
@@ -24,7 +23,7 @@ export function calcularFinanceiro(
   percentualReserva: number,
   diasNoPeriodo: number = 1
 ): FinanceiroResult {
-  const faturamentoTotal = faturamentoHotmart + faturamentoYoutube;
+  const faturamentoTotal = faturamentoHotmart;
   const investimentoMetaComImposto = investimentoMeta * (1 + impostoMetaPercent / 100);
   const investimentoTotal = investimentoMetaComImposto + investimentoGoogle;
   
