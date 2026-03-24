@@ -61,7 +61,12 @@ export async function financeRoutes(server: FastifyInstance) {
     if (result.investimentoTotal > result.faturamentoTotal * 0.5) alerts.push({ type: 'warning', message: 'Custo de investimento muito alto (> 50% do faturamento)' });
 
     return {
-      summary: result,
+      summary: {
+        ...result,
+        faturamentoHotmart: aggregated.faturamentoHotmart,
+        investimentoMeta: aggregated.investimentoMeta,
+        investimentoGoogle: aggregated.investimentoGoogle,
+      },
       division,
       alerts,
       period: { start: startDate, end: endDate }
