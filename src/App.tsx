@@ -48,57 +48,107 @@ export default function App() {
     <div className="min-h-screen bg-background text-on-surface flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        'fixed left-0 top-0 h-full bg-surface-container-low flex flex-col py-6 z-50 border-r border-outline-variant/10 transition-all duration-300',
-        sidebarOpen ? 'w-56 px-4' : 'w-16 px-2',
+        'fixed left-0 top-0 h-full z-50 flex flex-col transition-all duration-300 ease-in-out',
+        'bg-gradient-to-b from-surface-container-low via-surface-container-low to-surface',
+        'border-r border-outline-variant/10',
+        sidebarOpen ? 'w-60' : 'w-[68px]',
         'lg:relative',
         !sidebarOpen && 'max-lg:-translate-x-full lg:translate-x-0'
       )}>
-        <div className="mb-8 flex items-center justify-between px-1">
-          <div className={cn('overflow-hidden transition-all', sidebarOpen ? 'w-auto' : 'w-0 lg:w-auto')}>
-            <h1 className={cn('font-bold text-on-surface whitespace-nowrap', sidebarOpen ? 'text-lg' : 'text-[10px] text-center')}>
-              {sidebarOpen ? 'SYNCRONIX' : 'SX'}
-            </h1>
+        {/* Logo area */}
+        <div className={cn(
+          'flex items-center h-16 border-b border-outline-variant/10 shrink-0',
+          sidebarOpen ? 'px-5 gap-3' : 'px-0 justify-center'
+        )}>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-primary/60 flex items-center justify-center shrink-0">
+            <span className="text-white font-black text-xs">SX</span>
           </div>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden text-on-surface-variant hover:text-on-surface">
-            <X className="w-5 h-5" />
-          </button>
+          {sidebarOpen && (
+            <div className="overflow-hidden">
+              <h1 className="font-bold text-on-surface text-sm tracking-wide">SYNCRONIX</h1>
+              <p className="text-[9px] uppercase tracking-[0.15em] text-primary/70 font-semibold">Financeiro</p>
+            </div>
+          )}
+          {sidebarOpen && (
+            <button onClick={() => setSidebarOpen(false)} className="ml-auto lg:hidden text-on-surface-variant hover:text-on-surface transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        <nav className="flex-1 flex flex-col gap-1">
+        {/* Navigation */}
+        <nav className="flex-1 flex flex-col gap-0.5 py-4 px-3">
+          <span className={cn(
+            'text-[9px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/50 mb-2',
+            sidebarOpen ? 'px-3' : 'text-center'
+          )}>
+            {sidebarOpen ? 'Menu' : '•••'}
+          </span>
           {navItems.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => { setActiveTab(key); setSidebarOpen(false); }}
               title={label}
               className={cn(
-                'flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200',
+                'flex items-center gap-3 rounded-xl transition-all duration-200 group relative',
+                sidebarOpen ? 'px-3 py-2.5' : 'px-0 py-2.5 justify-center',
                 activeTab === key
-                  ? 'bg-primary-container/20 text-primary'
+                  ? 'bg-primary/15 text-primary shadow-sm shadow-primary/5'
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
               )}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              <span className={cn('font-medium text-sm whitespace-nowrap', !sidebarOpen && 'hidden')}>{label}</span>
+              {activeTab === key && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+              )}
+              <Icon className={cn('w-[18px] h-[18px] shrink-0', !sidebarOpen && 'mx-auto')} />
+              {sidebarOpen && <span className="font-medium text-[13px] whitespace-nowrap">{label}</span>}
+              {!sidebarOpen && (
+                <div className="absolute left-full ml-2 px-2.5 py-1 bg-surface-container-highest text-on-surface text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-lg z-50">
+                  {label}
+                </div>
+              )}
             </button>
           ))}
         </nav>
+
+        {/* Sidebar footer */}
+        <div className={cn(
+          'border-t border-outline-variant/10 py-3 shrink-0',
+          sidebarOpen ? 'px-5' : 'px-0 flex justify-center'
+        )}>
+          {sidebarOpen ? (
+            <p className="text-[9px] text-on-surface-variant/40 uppercase tracking-wider">v1.0 · Hexacron</p>
+          ) : (
+            <div className="w-2 h-2 rounded-full bg-secondary/60 animate-pulse" title="Online" />
+          )}
+        </div>
       </aside>
 
       {/* Main */}
       <main className="flex-1 min-w-0">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-outline-variant/10 px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+        <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur-xl border-b border-outline-variant/10 px-4 sm:px-6 lg:px-8 flex items-center">
+          <div className="flex items-center justify-between gap-4 w-full">
             <div className="flex items-center gap-3">
-              <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-on-surface-variant hover:text-on-surface">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high">
                 <Menu className="w-5 h-5" />
               </button>
-              <h2 className="text-xl font-bold tracking-tight capitalize">{activeTab}</h2>
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:flex text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high">
+                <Menu className="w-4 h-4" />
+              </button>
+              <div>
+                <h2 className="text-lg font-bold tracking-tight capitalize leading-tight">{activeTab}</h2>
+                {activeTab === 'dashboard' && summary?.period && (
+                  <p className="text-[10px] text-on-surface-variant">
+                    {new Date(summary.period.start).toLocaleDateString('pt-BR')} — {new Date(summary.period.end).toLocaleDateString('pt-BR')}
+                  </p>
+                )}
+              </div>
             </div>
             {activeTab === 'dashboard' && (
               <DateRangePicker
